@@ -1,0 +1,15 @@
+ARG PYTHON_IMAGE
+FROM ${PYTHON_IMAGE}
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app/backend
+COPY backend/pyproject.toml ./
+COPY backend/app ./app
+COPY deploy/python.constraints /tmp/python.constraints
+RUN pip install --no-cache-dir -c /tmp/python.constraints . && useradd --uid 10001 --create-home quicklist && mkdir -p /var/lib/quicklist && chown -R quicklist:quicklist /app /var/lib/quicklist
+COPY backend/alembic ./alembic
+COPY backend/alembic.ini ./
+COPY deploy/migrate.py /app/migrate.py
+COPY deploy/archive_crypto.py /app/archive_crypto.py
+COPY --chown=10001:10001 data/original /app/data/original
+USER 10001:10001
+CMD ["uvicorn","app.main:app","--host","0.0.0.0","--port","8000","--workers","2","--proxy-headers","--forwarded-allow-ips=172.28.84.2,172.28.84.3","--no-access-log","--timeout-graceful-shutdown","50"]

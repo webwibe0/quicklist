@@ -1,0 +1,9 @@
+[Unit]
+Description=QuickList private container health
+After=docker.service
+Requires=docker.service
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/quicklist/deploy
+ExecStart=/usr/bin/python3 /opt/quicklist/deploy/monitor.py --env-file /etc/quicklist/production.env -f compose.yml -f compose.closed.yml
+NoNewPrivileges=true

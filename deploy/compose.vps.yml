@@ -1,0 +1,31 @@
+# Separate 1-vCPU / 2-GiB VPS profile. Validate and measure before admission.
+name: quicklist-production
+services:
+  postgres:
+    mem_limit: 384m
+    shm_size: 64m
+    command: [postgres, -c, shared_buffers=64MB, -c, effective_cache_size=256MB, -c, work_mem=2MB, -c, maintenance_work_mem=32MB, -c, max_connections=40, -c, log_statement=none, -c, log_min_error_statement=panic, -c, log_error_verbosity=terse, -c, log_parameter_max_length=0, -c, log_parameter_max_length_on_error=0]
+  backend:
+    image: quicklist/backend:650da5c5e84ae7f3
+    mem_limit: 384m
+    cpus: 0.9
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000', --workers, '1', --proxy-headers, '--forwarded-allow-ips=172.28.84.2,172.28.84.3', --no-access-log, --timeout-graceful-shutdown, '50']
+  worker:
+    image: quicklist/backend:650da5c5e84ae7f3
+    mem_limit: 192m
+    cpus: 0.2
+  frontend:
+    image: quicklist/frontend:budget-58497b84318e6d80
+    mem_limit: 384m
+    environment:
+      NODE_OPTIONS: --max-old-space-size=256
+  caddy:
+    mem_limit: 96m
+    ports: ['80:80', '443:443']
+    volumes: [./Caddyfile.vps:/etc/caddy/Caddyfile:ro]
+  backup:
+    mem_limit: 128m
+    cpus: 0.15
+  migrate:
+    image: quicklist/backend:650da5c5e84ae7f3
+    mem_limit: 384m

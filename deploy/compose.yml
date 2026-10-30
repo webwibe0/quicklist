@@ -1,0 +1,192 @@
+name: quicklist-private-staging
+x-app: &app
+  image: quicklist-readiness-backend:0009
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile.backend
+    args:
+      PYTHON_IMAGE: ${PYTHON_IMAGE:?}
+  restart: unless-stopped
+  init: true
+  stop_grace_period: 60s
+  security_opt: [no-new-privileges:true]
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  environment: &environment
+    APP_ENVIRONMENT: ${APP_ENVIRONMENT:-staging}
+    AUTH_ORIGIN: ${AUTH_ORIGIN:?}
+    AUTH_COOKIE_SECURE: 'true'
+    AUTH_REQUIRE_EMAIL_VERIFICATION: 'true'
+    AUTH_REGISTRATION_ENABLED: ${AUTH_REGISTRATION_ENABLED:-false}
+    GOOGLE_CALENDAR_ENABLED: ${GOOGLE_CALENDAR_ENABLED:-false}
+    GOOGLE_REDIRECT_URI: ${AUTH_ORIGIN:?}/api/v1/calendar/google/callback
+    GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+    SEMANTIC_SEARCH_ENABLED: 'true'
+    EMBEDDING_REAL_API_ENABLED: ${EMBEDDING_REAL_API_ENABLED:-false}
+    EMBEDDING_WORKER_ENABLED: 'true'
+    EMBEDDING_WORKER_IN_WEB: 'false'
+    EMBEDDING_PRODUCTION_INDEXING_APPROVED: 'true'
+    EMBEDDING_ALLOWED_CLUSTER_ID: ${EMBEDDING_ALLOWED_CLUSTER_ID:?}
+    EMBEDDING_BUDGET_USD: ${EMBEDDING_BUDGET_USD:-0}
+    EMBEDDING_BUDGET_PATH: ${EMBEDDING_BUDGET_PATH:-/var/lib/quicklist/embedding-budget.sqlite3}
+    EMBEDDING_BUDGET_MAX_CALLS: '500'
+    EMBEDDING_MIN_CALL_INTERVAL_SECONDS: '30'
+    EMBEDDING_BATCH_SIZE: '8'
+    INTERACTIVE_BUDGET_USD: ${INTERACTIVE_BUDGET_USD:-0}
+    AI_TOTAL_BUDGET_USD: ${AI_TOTAL_BUDGET_USD:-4}
+    AI_USAGE_MODE: ${AI_USAGE_MODE:-capped}
+    INTERACTIVE_BUDGET_MAX_CALLS: ${INTERACTIVE_BUDGET_MAX_CALLS:-0}
+    INTERACTIVE_BUDGET_PATH: ${INTERACTIVE_BUDGET_PATH:-/var/lib/quicklist/interactive-budget.sqlite3}
+    WORKER_STATUS_PATH: /var/lib/quicklist/worker-status.json
+    MAIL_HOST: ${MAIL_HOST:-}
+    MAIL_PORT: ${MAIL_PORT:-587}
+    MAIL_SSL: ${MAIL_SSL:-false}
+    MAIL_CA_FILE: ${MAIL_CA_FILE:-}
+    MAIL_USERNAME: ${MAIL_USERNAME:-}
+    MAIL_FROM: ${MAIL_FROM:-}
+    SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+  secrets: [database_url, openai_api_key, mail_password, google_client_secret, google_token_key]
+  volumes: [ai_budget:/var/lib/quicklist]
+  depends_on:
+    postgres: {condition: service_healthy}
+  logging: &logging
+    driver: json-file
+    options: {max-size: 10m, max-file: '3'}
+services:
+  postgres:
+    mem_limit: 2g
+    shm_size: 256m
+    command: [postgres, -c, shared_buffers=256MB, -c, max_connections=60, -c, log_statement=none, -c, log_min_error_statement=panic, -c, log_error_verbosity=terse, -c, log_parameter_max_length=0, -c, log_parameter_max_length_on_error=0]
+    image: ${POSTGRES_IMAGE:?}
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: quicklist_admin
+      POSTGRES_DB: quicklist
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_admin_password
+      POSTGRES_INITDB_ARGS: --locale=C.UTF-8 --encoding=UTF8
+    secrets: [postgres_admin_password]
+    volumes: [staging_pgdata:/var/lib/postgresql/data]
+    networks:
+      private: {ipv4_address: 172.28.84.5}
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U quicklist_admin -d quicklist']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+  backend:
+    <<: *app
+    mem_limit: 1g
+    networks:
+      private: {ipv4_address: 172.28.84.4}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  worker:
+    <<: *app
+    mem_limit: 512m
+    cpus: 0.5
+    command: [python, -m, app.worker]
+    networks:
+      private: {ipv4_address: 172.28.84.6}
+    healthcheck:
+      test: [CMD, python, -c, "import json,time; x=json.load(open('/var/lib/quicklist/worker-status.json')); assert time.time()-x['updated_at']<90 and x['status'] in ('running','budget_blocked')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  frontend:
+    mem_limit: 768m
+    image: quicklist-readiness-frontend:0009
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.frontend
+      args: {NODE_IMAGE: '${NODE_IMAGE:?}'}
+    restart: unless-stopped
+    init: true
+    environment:
+      BACKEND_URL: http://backend:8000
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    networks:
+      private: {ipv4_address: 172.28.84.3}
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/login').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging: *logging
+  caddy:
+    mem_limit: 128m
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:2018/health]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    image: ${CADDY_IMAGE:?}
+    restart: unless-stopped
+    environment:
+      APP_HOST: ${APP_HOST:?}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+      STAGING_USER: ${STAGING_USER:-}
+      STAGING_PASSWORD_HASH: ${STAGING_PASSWORD_HASH:-}
+    volumes:
+      - ${CADDY_CONFIG:-./Caddyfile.closed}:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      private: {ipv4_address: 172.28.84.2}
+    depends_on:
+      frontend: {condition: service_healthy}
+    logging: *logging
+  migrate:
+    <<: *app
+    restart: "no"
+    profiles: [operations]
+    command: [python, /app/migrate.py]
+    secrets: [database_url, migration_database_url]
+    networks: [private]
+  backup:
+    mem_limit: 256m
+    cpus: 0.25
+    image: ${POSTGRES_IMAGE:?}
+    restart: unless-stopped
+    entrypoint: [/bin/sh, /opt/backup.sh]
+    volumes: [./backup.sh:/opt/backup.sh:ro, backups:/backups]
+    secrets: [postgres_admin_password]
+    networks:
+      private: {ipv4_address: 172.28.84.7}
+    depends_on:
+      postgres: {condition: service_healthy}
+    healthcheck:
+      test: [CMD-SHELL, 'test -f /backups/last-success && test $$(($$(date +%s)-$$(cat /backups/last-success))) -lt 90000']
+      interval: 60s
+      timeout: 5s
+      retries: 3
+    logging: *logging
+networks:
+  private:
+    ipam:
+      config: [{subnet: 172.28.84.0/24}]
+volumes:
+  staging_pgdata:
+  ai_budget:
+  caddy_data:
+  caddy_config:
+  backups:
+secrets:
+  postgres_admin_password: {file: '${SECRETS_DIR:?}/postgres_admin_password'}
+  migration_database_url: {file: '${SECRETS_DIR:?}/migration_database_url'}
+  database_url: {file: '${SECRETS_DIR:?}/database_url'}
+  openai_api_key: {file: '${SECRETS_DIR:?}/openai_api_key'}
+  mail_password: {file: '${SECRETS_DIR:?}/mail_password'}
+  google_client_secret: {file: '${SECRETS_DIR:?}/google_client_secret'}
+  google_token_key: {file: '${SECRETS_DIR:?}/google_token_key'}

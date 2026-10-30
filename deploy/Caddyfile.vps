@@ -1,0 +1,45 @@
+{
+    admin off
+    log default {
+        format filter {
+            wrap json
+            fields {
+                request delete
+                resp_headers delete
+            }
+        }
+    }
+}
+www.quicklist-ai.com {
+    redir https://quicklist-ai.com{uri} permanent
+}
+quicklist-ai.com {
+    # Closed testing gate, independent of the existing account/session security.
+    basic_auth {
+        {$STAGING_USER} {$STAGING_PASSWORD_HASH}
+    }
+    header {
+        defer
+        Strict-Transport-Security "max-age=31536000"
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer
+        Permissions-Policy "camera=(), geolocation=(), microphone=(self)"
+    }
+    request_body {
+        max_size 9MB
+    }
+    handle /api/health {
+        rewrite * /health
+        reverse_proxy backend:8000
+    }
+    handle /api/v1/* {
+        reverse_proxy backend:8000
+    }
+    handle {
+        reverse_proxy frontend:3000
+    }
+}
+http://127.0.0.1:2018 {
+    respond /health "ok" 200
+}

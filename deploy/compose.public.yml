@@ -1,0 +1,6 @@
+# Approval-only overlay. Never used by local staging scripts.
+name: quicklist-production
+services:
+  caddy:
+    ports: ['80:80', '443:443']
+    volumes: [./Caddyfile.public:/etc/caddy/Caddyfile:ro]

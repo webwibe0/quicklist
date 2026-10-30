@@ -1,0 +1,26 @@
+services:
+  caddy:
+    ports: ['127.0.0.1:8443:8443']
+  backend:
+    environment:
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAIL_CA_FILE: /run/secrets/mailpit_cert
+    secrets: [database_url, openai_api_key, mail_password, google_client_secret, google_token_key, mailpit_cert]
+  mailpit:
+    image: ${MAILPIT_IMAGE:?}
+    restart: unless-stopped
+    environment:
+      MP_SMTP_TLS_CERT: /run/secrets/mailpit_cert
+      MP_SMTP_TLS_KEY: /run/secrets/mailpit_key
+      MP_SMTP_REQUIRE_STARTTLS: 'true'
+      MP_SMTP_ALLOWED_RECIPIENTS: '@example\.test$$'
+      MP_DISABLE_VERSION_CHECK: 'true'
+      MP_QUIET: 'true'
+    secrets: [mailpit_cert, mailpit_key]
+    ports: ['127.0.0.1:8026:8025']
+    networks:
+      private: {ipv4_address: 172.28.84.8}
+secrets:
+  mailpit_cert: {file: '${SECRETS_DIR:?}/mailpit_cert'}
+  mailpit_key: {file: '${SECRETS_DIR:?}/mailpit_key'}
