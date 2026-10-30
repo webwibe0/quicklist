@@ -1,0 +1,49 @@
+/* Account day planner only. Approved Header, hero and composer styles are unchanged. */
+.upcoming-sidebar .sidebar-caption { margin-bottom: 12px; }
+.planner-count { font-size: 11px; line-height: 1.5; color: #697366; margin-bottom: 25px; }
+.upcoming-sidebar .planner-nearest { margin-bottom: 8px; }
+.upcoming-sidebar .timeline-event { min-height: 70px; padding-bottom: 16px; }
+.upcoming-sidebar .timeline-content p { font-size: clamp(13px,.95vw,18px); }
+.upcoming-sidebar .timeline-content>span { font-size: 11px; }
+.planner-group { border-top: 1px solid #dce1d2; padding: 10px 0; margin-top: 6px; }
+.planner-group>summary { cursor: pointer; display: flex; align-items: center; gap: 10px; list-style: none; font-size: 12px; color: #344f3c; min-height: 30px; }
+.planner-group>summary::-webkit-details-marker { display: none; }
+.planner-group>summary>span { background: #e7ebdd; border-radius: 99px; min-width: 23px; padding: 3px 6px; text-align: center; font-size: 11px; }
+.planner-group>summary>svg { margin-left: auto; width: 14px; height: 14px; transition: transform .2s; }
+.planner-group[open]>summary>svg { transform: rotate(180deg); }
+.planner-group .timeline-list { margin: 12px 0 0; }
+.planner-group .timeline-event { min-height: 55px; padding-bottom: 10px; }
+.planner-group .timeline-content p { font-size: 13px; }
+.planner-overdue>summary,.planner-overdue>h3 { color: #87503b; }
+.planner-overdue .timeline-marker { background: #9b6e4e; }
+.planner-overdue .timeline-time { color: #87503b; }
+.planner-undated,.planner-empty,.planner-loading,.planner-error { font-size: 12px; line-height: 1.6; margin: 12px 0; color: #697366; }
+.planner-error { color: #8a4531; }
+.upcoming-sidebar .sidebar-button { flex-shrink: 0; }
+.today-plans-dialog { width: min(680px,calc(100vw - 32px)); max-height: min(820px,85dvh); border: 1px solid #cbd4bd; border-radius: 28px; padding: clamp(22px,4vw,40px); color: #102b23; background: #f8f8ee; box-shadow: 0 24px 80px #10291d40; overflow-y: auto; }
+.today-plans-dialog::backdrop { background: #152d2660; backdrop-filter: blur(5px); }
+.today-plans-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
+.today-plans-heading h2 { font-size: clamp(22px,3vw,30px); font-weight: 550; letter-spacing: -.04em; line-height: 1.2; }
+.today-plans-heading .eyebrow { font-size: 9px; margin-bottom: 8px; }
+.today-plans-heading .button { font-size: 12px; }
+.today-plans-caption { font-size: 13px; color: #697366; margin-bottom: 26px; }
+.today-plans-dialog section { margin: 22px 0; }
+.today-plans-dialog section>h3 { font-size: 13px; font-weight: 600; margin-bottom: 18px; }
+.today-plans-dialog .timeline-event { grid-template-columns: 8px 65px minmax(0,1fr); min-height: 72px; }
+.today-plans-dialog .timeline-content p { font-size: 16px; }
+.today-plans-dialog .timeline-content>span { font-size: 12px; }
+@media(max-width:1023px) {
+  .sidebar-mobile>summary { padding: 8px 0; }
+  .sidebar-mobile .planner-group>summary { justify-content: flex-start; font-size: 12px; }
+  .sidebar-mobile .planner-group>summary>span { display: block; }
+  .sidebar-mobile .planner-group>summary>svg { transform: none; }
+  .sidebar-mobile .planner-group[open]>summary>svg { transform: rotate(180deg); }
+  .sidebar-mobile .planner-group .timeline-list { padding-right: 8px; }
+  .sidebar-mobile .planner-count { margin-bottom: 16px; }
+}
+@media(max-width:550px) {
+  .today-plans-heading { gap: 10px; }
+  .today-plans-dialog .timeline-event { grid-template-columns: 7px 55px minmax(0,1fr); gap: 12px; }
+  .today-plans-dialog .timeline-content p { font-size: 14px; }
+}
+@media(prefers-reduced-motion:reduce) { .planner-group>summary>svg { transition: none; } }

@@ -1,0 +1,248 @@
+/* Approved 28 October reference. Main screen only; account/recovery pages keep their styles. */
+.app-shell { height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0,1fr); overflow: hidden; }
+.app-header {
+  position: relative; z-index: 20; height: auto; min-height: clamp(100px,7.18vw,138px);
+  display: grid; grid-template-columns: minmax(200px,1.18fr) auto minmax(0,1.36fr);
+  gap: clamp(20px,2.4vw,46px); padding: 18px clamp(28px,3.75vw,72px); margin: 0;
+  border-color: #dedfd3; background: #faf9f23b;
+}
+.brand { gap: clamp(14px,1.15vw,22px); min-width: 0; }
+.brand-mark { width: clamp(46px,3.6vw,68px); height: auto; aspect-ratio: 1; border: 0; border-radius: 18px; background: none; box-shadow: 0 3px 10px #163d2420; transition: filter .22s,transform .22s; }
+.brand-mark svg { display: block; width: 100%; height: 100%; }
+.brand:hover .brand-mark { transform: translateY(-1px); filter: brightness(1.08); }
+.brand-name { display: block; font-size: clamp(27px,2vw,38px); font-weight: 750; letter-spacing: -.055em; line-height: 1.1; }
+.brand-subtitle { font-size: clamp(8px,.65vw,12px); letter-spacing: .28em; margin-top: 8px; white-space: nowrap; }
+.header-day { position: static; transform: none; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: clamp(15px,1.2vw,22px); min-width: 0; }
+.header-day > span:first-child { color: #808580; font-size: 10px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; }
+.header-day time { line-height: 1.2; font-weight: 550; white-space: nowrap; }
+.header-day .connection-status { font-size: clamp(12px,.95vw,17px); line-height: 1.2; letter-spacing: 0; text-transform: none; color: #6b756e; gap: 8px; }
+.connection-status i { height: 9px; width: 9px; }
+.status-online i { background: #609d38; box-shadow: none; }
+.app-header .header-actions { display: flex; flex-direction: row; justify-content: flex-end; gap: clamp(16px,1.6vw,30px); min-width: 0; }
+.header-account { display: flex; align-items: center; gap: clamp(12px,1vw,20px); min-width: 0; border-left: 1px solid #dedfd3; padding-left: clamp(16px,1.5vw,28px); }
+.profile-monogram { display: grid; width: clamp(48px,3.6vw,68px); height: auto; aspect-ratio: 1; flex-shrink: 0; border: 4px solid #d8e0c1; color: #fffef2; font-size: clamp(19px,1.4vw,26px); font-weight: 400; background: linear-gradient(135deg,#6d8058,#30482a 60%,#1c3421); box-shadow: 0 0 0 2px #eef0de,inset 0 1px 3px #fff9,0 3px 8px #213b2120; transition: box-shadow .22s; }
+.header-account:hover .profile-monogram { box-shadow: 0 0 0 3px #e2e8ce,inset 0 1px 3px #fff9,0 4px 12px #213b2128; }
+.account-controls { display: grid; gap: 4px; max-width: clamp(110px,9vw,180px); font-size: clamp(10px,.75vw,14px); line-height: 1.25; }
+.account-controls>span { min-width: 0; }
+.account-controls a, .account-controls button { color: #184937; font-size: inherit; width: fit-content; text-underline-offset: 3px; }
+.account-controls small { font-size: 9px; color: #66705b; }
+.new-chat-button { min-height: clamp(48px,3.6vw,66px); padding: 13px clamp(18px,1.5vw,29px); font-size: clamp(14px,1.05vw,20px); font-weight: 450; gap: 13px; background: linear-gradient(135deg,#254c33,#0a3328); border: 1px solid #234f37; box-shadow: inset 0 1px 0 #a1bc8828; }
+.new-chat-button svg { width: 24px; height: 24px; }
+.calendar-controls { min-width: 0; flex-shrink: 0; }
+.calendar-controls summary { display: flex; align-items: center; gap: 14px; min-height: clamp(58px,4.15vw,80px); padding: 12px 20px; border-radius: 25px; background: #eef0e2c9; list-style: none; transition: background .22s,box-shadow .22s; }
+.calendar-controls summary::-webkit-details-marker { display: none; }
+.calendar-controls summary:hover, .calendar-controls[open] summary { background: #e5ead6; box-shadow: 0 4px 15px #3a50310b; }
+.google-calendar-mark { display: block; width: 36px; height: 40px; }
+.calendar-summary-copy { display: grid; gap: 7px; font-size: clamp(12px,.87vw,16px); white-space: nowrap; color: #092024; }
+.calendar-summary-copy small { display: flex; gap: 8px; align-items: center; color: #78816d; font-size: 10px; letter-spacing: .035em; text-transform: uppercase; }
+.calendar-summary-copy i { width: 9px; height: 9px; border-radius: 50%; background: #949c82; }
+.calendar-connected small i { background: #5b9839; box-shadow: inset 0 0 0 1px #497a2d; }
+.calendar-error small i { background: #a2563d; }
+.calendar-popover { right: 0; width: min(350px,calc(100vw - 32px)); max-height: min(620px,calc(100dvh - 190px)); overflow-y: auto; text-transform: none; letter-spacing: normal; }
+.calendar-popover input { accent-color: #4a7e48; }
+.workspace { height: 100%; min-height: 0; width: 100%; max-width: none; display: grid; grid-template-columns: minmax(0,3.14fr) minmax(290px,1fr); padding: 0; gap: 0; }
+.chat-panel { min-height: 0; padding: 0; }
+.chat-content { padding: 28px clamp(28px,3.75vw,72px); }
+.chat-panel:has(.empty-state) {
+  --hero-rhythm: clamp(10px,1.2dvh,16px); --hero-composer-gap: clamp(18px,2.2dvh,26px); --hero-top-space: clamp(24px,3.4dvh,38px);
+  grid-template-rows: minmax(0,1fr) auto; gap: var(--hero-composer-gap); padding: 0;
+}
+.chat-panel:has(.empty-state) .chat-scroll { min-height: 0; overflow-y: auto; overflow-x: clip; }
+.chat-panel:has(.empty-state) .chat-content { height: 100%; padding: 0; }
+.chat-panel:has(.empty-state) .empty-state { min-height: 100%; display: grid; grid-template-rows: repeat(5,max-content); align-content: space-between; gap: var(--hero-rhythm); padding: var(--hero-top-space) clamp(28px,3.75vw,72px) 0; margin: 0; }
+.empty-state h1 { font-size: clamp(54px,4.85vw,94px); line-height: .95; letter-spacing: -.065em; font-weight: 750; white-space: normal; width: max-content; max-width: 100%; }
+.empty-state h1 > span { color: #4b5739; }
+.empty-state .eyebrow { font-size: clamp(10px,.72vw,14px); font-weight: 600; letter-spacing: .3em; }
+.empty-state .welcome-copy { font-size: clamp(16px,1.13vw,22px); line-height: 1.45; color: #6b756e; }
+.hero-landscape { inset: 0; }
+.hero-mountains { width: 83%; height: 106%; right: -8%; top: -2%; background-position: 65% 50%; background-size: cover; mask-image: linear-gradient(to right,transparent 1%,#000 35%),linear-gradient(to bottom,transparent,#000 17%,#000 60%,transparent 100%); }
+.hero-sun { width: 25%; height: auto; aspect-ratio: 1; top: 16%; right: 14%; background: linear-gradient(135deg,#bcc3a5,#e3e5d5); }
+.hero-orbit { width: 29%; height: 88%; right: 14%; top: 3%; transform: rotate(33deg); border-color: #b9c4a474; }
+.hero-orbit-dot { right: 9.5%; top: 13%; width: clamp(18px,1.5vw,29px); height: auto; aspect-ratio: 1; }
+.hero-landscape::after { inset: 65% 0 -5px; filter: none; background: linear-gradient(transparent,#f6f5ed 99%); }
+.chat-panel:has(.empty-state) .example-grid { width: 83%; max-width: 1050px; margin: 0; gap: clamp(10px,.85vw,16px); }
+.example-chip { min-height: clamp(64px,4.55vw,88px); padding: 13px clamp(13px,1.1vw,22px); gap: clamp(12px,1.15vw,22px); border-radius: 23px; font-size: clamp(13px,1.05vw,20px); line-height: 1.35; background: #fafaf3b8; border-color: #dcdfd0; }
+.example-chip>span:nth-child(2) { max-width: 310px; }
+.example-icon { width: clamp(38px,2.9vw,55px); height: auto; aspect-ratio: 1; background: #e8ecdb; }
+.example-icon svg { width: 26px; height: 26px; }
+.example-arrow { width: 21px; height: 21px; }
+.empty-state .welcome-hint { font-size: clamp(11px,.81vw,15px); line-height: 1.5; color: #687263; }
+.composer-wrap, .chat-panel:has(.empty-state) .composer-wrap { width: auto; max-width: none; margin: 0; padding: 0 clamp(26px,2.35vw,45px) clamp(24px,5dvh,54px) clamp(28px,3.5vw,68px); }
+.composer-wrap::before { inset: -10px 0 0; }
+.composer { display: flex; flex-direction: column; justify-content: space-between; gap: 17px; min-height: clamp(176px,12.3vw,236px); padding: clamp(22px,1.6vw,32px) clamp(23px,1.65vw,34px) 22px; border-radius: clamp(32px,2.5vw,48px); border-width: 2px; border-color: #a5b58b; background: linear-gradient(115deg,#0d3025f5,#17462ff2 54%,#0b3027f5); box-shadow: 0 16px 24px #203e2c2c,0 3px 4px #304d2510,inset 0 1px 2px #eef5c957; }
+.composer::before { background: radial-gradient(ellipse 38% 155% at var(--light-x) var(--light-y),#c9e6bc16,transparent 85%),linear-gradient(165deg,#f3f5dd0c,transparent 40%,#c3e8b308); }
+.composer-input-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: 20px; padding: 0; min-height: 0; }
+.composer textarea { min-height: 58px; font-size: clamp(21px,1.85vw,35px); line-height: 1.45; padding-top: 8px; letter-spacing: -.025em; }
+.composer-actions { position: static; display: flex; align-items: center; gap: clamp(14px,1.5vw,28px); }
+.mic-button,.composer .send-button { width: clamp(64px,5vw,96px); height: clamp(64px,5vw,96px); min-height: 0; }
+.mic-button svg { width: 40px; height: 40px; }
+.composer .send-button svg { width: 34px; height: 34px; }
+.composer .send-button { background: #cfdfbe0b; border: 1px solid #ccdfc52b; box-shadow: inset 0 1px 0 #e3f0d808; }
+.composer .send-button:disabled { opacity: .72; }
+.composer-toolbar { display: block; margin: 0; min-height: 0; }
+.composer-left { display: block; width: auto; }
+.auto-speak-control { display: inline-flex; width: fit-content; max-width: 100%; flex: 0 0 auto; align-items: center; gap: 15px; padding: 13px 24px; border-radius: 999px; border: 1px solid #c6d9bd38; background: #112f2570; color: #f5f7ed; font-size: clamp(12px,.95vw,18px); line-height: 1.4; cursor: pointer; transition: border-color .2s,background .2s; }
+.auto-speak-control:hover { background: #244c3670; border-color: #d6e7c65c; }
+.auto-speak-control input { appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 58px; height: 32px; margin: 0; position: relative; border: 1px solid #b8d3a087; border-radius: 99px; background: #71826970; box-shadow: inset 0 2px 4px #142b2470; transition: background .22s,border-color .22s; cursor: pointer; }
+.auto-speak-control input::after { content: ''; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fcfff5; box-shadow: 0 1px 3px #112a2680; transition: transform .22s; }
+.auto-speak-control input:checked { background: linear-gradient(#8bd991,#2b8d46); border-color: #a6e5a6; }
+.auto-speak-control input:checked::after { transform: translateX(26px); }
+.auto-speak-control:focus-within { outline: 2px solid #dcebc6; outline-offset: 4px; }
+.auto-speak-control input:focus-visible { outline: none; }
+.voice-options:empty { display: none; }
+.voice-options { margin-bottom: 0; }
+.upcoming-sidebar { padding: clamp(45px,3.25vw,63px) clamp(26px,3vw,58px) 28px; }
+.sidebar-desktop { display: flex; flex-direction: column; min-height: 100%; }
+.sidebar-desktop h2 { font-size: clamp(14px,1.02vw,20px); letter-spacing: .15em; font-weight: 750; gap: 22px; }
+.sidebar-desktop h2>span { min-width: 38px; height: 38px; background: #e6ead9; font-size: 16px; }
+.sidebar-caption { font-size: clamp(13px,.95vw,18px); margin: 15px 0 clamp(42px,3.2vw,62px); color: #6b756e; }
+.sidebar-empty { padding: 0 0 24px 35px; min-height: 0; margin-bottom: 25px; }
+.sidebar-empty p { font-size: clamp(18px,1.25vw,24px); line-height: 1.4; }
+.sidebar-empty>span:last-child { font-size: clamp(14px,1vw,19px); line-height: 1.5; margin-top: 25px; max-width: 290px; color: #6b756e; }
+.empty-rail { left: 4px; top: 8px; bottom: 0; }
+.sidebar-desktop .sidebar-button { margin-top: auto; min-height: clamp(50px,3.65vw,70px); font-size: clamp(14px,1.05vw,20px); padding-inline: clamp(18px,1.6vw,30px); }
+.quiet-note { margin-top: clamp(30px,2.4vw,46px); padding-top: clamp(30px,2.5vw,48px); padding-bottom: clamp(30px,2.4vw,46px); gap: 28px; }
+.quiet-note p { font-size: clamp(10px,.7vw,13px); letter-spacing: .29em; }
+.quiet-note span { font-size: clamp(12px,.88vw,17px); line-height: 1.65; margin-top: 28px; color: #6b756e; }
+.timeline-list { margin-bottom: 24px; }
+
+@media (min-width: 1024px) and (max-height: 850px) {
+  .app-header { min-height: 100px; padding-block: 12px; }
+  .chat-panel:has(.empty-state) { --hero-top-space: 20px; --hero-rhythm: 10px; --hero-composer-gap: 18px; }
+  .empty-state h1 { font-size: clamp(52px,4.5vw,76px); }
+  .empty-state .welcome-copy { font-size: 16px; }
+  .example-chip { min-height: 60px; padding-block: 10px; font-size: 13px; }
+  .example-icon { width: 35px; }
+  .composer { min-height: 166px; padding-block: 20px; gap: 12px; }
+  .mic-button,.composer .send-button { width: 64px; height: 64px; }
+  .auto-speak-control { padding: 9px 18px; }
+  .auto-speak-control input { width: 46px; height: 26px; }
+  .auto-speak-control input::after { width: 18px; height: 18px; }
+  .auto-speak-control input:checked::after { transform: translateX(20px); }
+  .quiet-note { margin-top: 24px; padding-block: 24px; }
+}
+@media (min-width: 1024px) and (max-width: 1499px) {
+  .app-header { grid-template-columns: minmax(200px,1fr) auto auto; gap: 22px; padding-inline: 32px; }
+  .brand-subtitle { font-size: 8px; letter-spacing: .21em; }
+  .app-header .header-actions { gap: 16px; }
+  .header-account { gap: 10px; padding-left: 16px; }
+  .calendar-controls summary { padding: 10px 13px; gap: 10px; }
+  .calendar-summary-copy { font-size: 12px; }
+  .google-calendar-mark { width: 29px; height: 33px; }
+  .account-controls { max-width: 120px; }
+  .new-chat-button { padding-inline: 18px; gap: 9px; }
+  .workspace { grid-template-columns: minmax(0,3.1fr) minmax(285px,1fr); }
+  .chat-panel:has(.empty-state) .example-grid { width: 88%; }
+  .upcoming-sidebar { padding-inline: 28px; }
+}
+@media (max-width: 1023px) {
+  .app-shell { display: flex; height: auto; min-height: 100dvh; overflow: visible; }
+  .app-header { width: 100%; height: auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-areas: 'brand brand new' 'day calendar account'; padding: 20px 28px; gap: 22px 18px; }
+  .brand { grid-area: brand; }
+  .brand-mark { width: 48px; }
+  .brand-name { font-size: 28px; }
+  .brand-subtitle { font-size: 8px; }
+  .header-day { display: flex; grid-area: day; align-items: flex-start; text-align: left; gap: 6px; font-size: 16px; }
+  .header-day>span:first-child { font-size: 8px; }
+  .header-day .connection-status { font-size: 12px; }
+  .app-header .header-actions { display: contents; }
+  .calendar-controls { grid-area: calendar; }
+  .calendar-controls summary { min-height: 66px; padding: 11px 14px; gap: 11px; border-radius: 19px; }
+  .calendar-summary-copy { font-size: 13px; }
+  .calendar-summary-copy small { font-size: 9px; }
+  .header-account { grid-area: account; padding: 0; border: 0; }
+  .profile-monogram { width: 47px; font-size: 18px; }
+  .account-controls { max-width: 110px; font-size: 10px; }
+  .new-chat-button { grid-area: new; justify-self: end; font-size: 14px; min-height: 46px; }
+  .workspace { height: auto; min-height: 0; display: flex; flex-direction: column; padding: 0; }
+  .chat-panel { width: 100%; order: 0; }
+  .chat-panel:has(.empty-state) { display: grid; grid-template-rows: auto auto; gap: 24px; }
+  .chat-panel:has(.empty-state) .empty-state { min-height: 0; gap: 24px; padding: 32px 28px 0; }
+  .empty-state h1 { font-size: clamp(44px,7.4vw,75px); }
+  .empty-state .welcome-copy { font-size: 18px; }
+  .chat-panel:has(.empty-state) .example-grid { width: 94%; }
+  .example-chip { min-height: 74px; font-size: 14px; }
+  .example-icon { width: 39px; }
+  .hero-mountains { width: 83%; right: -13%; top: 0; opacity: .85; }
+  .hero-sun { width: 27%; right: 10%; }
+  .hero-orbit { width: 32%; right: 9%; height: 85%; }
+  .hero-orbit-dot { right: 9%; top: 13%; }
+  .composer-wrap,.chat-panel:has(.empty-state) .composer-wrap { padding: 0 28px 20px; width: auto; }
+  .composer { min-height: 178px; border-radius: 34px; padding: 24px; }
+  .composer textarea { font-size: 23px; }
+  .mic-button,.composer .send-button { width: 68px; height: 68px; }
+  .composer-actions { gap: 14px; }
+  .auto-speak-control { font-size: 13px; padding: 11px 18px; gap: 12px; }
+  .auto-speak-control input { width: 46px; height: 26px; }
+  .auto-speak-control input::after { width: 18px; height: 18px; }
+  .auto-speak-control input:checked::after { transform: translateX(20px); }
+  .upcoming-sidebar { padding: 0 28px 22px; order: 1; max-height: none; overflow: visible; }
+  .sidebar-desktop { display: none; }
+  .sidebar-mobile { display: block; }
+  .calendar-popover { max-height: 65dvh; }
+}
+@media (max-width: 550px) {
+  .app-header,.app-header:has(.calendar-controls) { grid-template-columns: minmax(0,1fr) auto; grid-template-areas: 'brand new' 'day calendar' 'account account'; gap: 18px 8px; padding: 18px 18px 16px; }
+  .brand { gap: 10px; }
+  .brand-mark { width: 38px; border-radius: 12px; }
+  .brand-name { font-size: 24px; }
+  .brand-subtitle { font-size: 6px; letter-spacing: .15em; margin-top: 5px; }
+  .new-chat-button { font-size: 12px; padding: 10px 12px; gap: 7px; min-height: 42px; }
+  .new-chat-button svg { width: 18px; height: 18px; }
+  .header-day { font-size: 14px; }
+  .header-day>span:first-child { font-size: 7px; letter-spacing: .17em; }
+  .header-day .connection-status { font-size: 11px; }
+  .calendar-controls summary { min-height: 58px; padding: 9px 11px; gap: 9px; border-radius: 16px; }
+  .google-calendar-mark { width: 26px; height: 30px; }
+  .calendar-summary-copy { font-size: 11px; gap: 5px; }
+  .calendar-summary-copy small { font-size: 8px; }
+  .calendar-summary-copy i { width: 7px; height: 7px; }
+  .header-account { gap: 11px; border-top: 1px solid #dee1d5; padding-top: 12px; }
+  .profile-monogram { display: grid; width: 36px; font-size: 14px; border-width: 3px; }
+  .account-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 12px; max-width: none; font-size: 10px; }
+  .account-controls>span { max-width: 185px; }
+  .account-controls small { font-size: 8px; }
+  .calendar-popover,.calendar-controls .calendar-popover { position: fixed; right: 16px; left: 16px; top: 160px; width: auto; max-height: calc(100dvh - 180px); }
+  .chat-panel:has(.empty-state) .empty-state { padding: 28px 18px 0; gap: 21px; }
+  .empty-state h1 { font-size: clamp(32px,8.85vw,48px); line-height: 1.02; }
+  .empty-state .eyebrow { font-size: 9px; letter-spacing: .23em; }
+  .empty-state .welcome-copy { font-size: 14px; }
+  .chat-panel:has(.empty-state) .example-grid { width: 100%; gap: 10px; }
+  .example-chip { font-size: 11px; min-height: 83px; padding: 11px 10px; border-radius: 17px; gap: 8px; }
+  .example-icon { width: 29px; }
+  .example-icon svg { width: 19px; height: 19px; }
+  .example-arrow { display: none; }
+  .empty-state .welcome-hint { font-size: 10px; max-width: 100%; }
+  .hero-landscape { opacity: .8; }
+  .hero-mountains { right: -29%; width: 104%; opacity: .55; }
+  .hero-sun { width: 37%; right: 4%; top: 10%; }
+  .hero-orbit { width: 45%; height: 73%; right: 6%; top: 6%; }
+  .hero-orbit-dot { right: 10%; top: 13%; width: 16px; }
+  .composer-wrap,.chat-panel:has(.empty-state) .composer-wrap { padding: 0 16px max(18px,env(safe-area-inset-bottom)); }
+  .composer { min-height: 170px; border-radius: 29px; padding: 20px 18px 18px; gap: 18px; }
+  .composer-input-row { gap: 12px; align-items: start; }
+  .composer textarea { font-size: 18px; min-height: 62px; padding-top: 0; }
+  .composer-actions { gap: 9px; }
+  .mic-button,.composer .send-button { width: 48px; height: 48px; }
+  .mic-button svg { width: 27px; height: 27px; }
+  .composer .send-button svg { width: 24px; height: 24px; }
+  .auto-speak-control { font-size: 10px; padding: 9px 12px; gap: 10px; line-height: 1.4; }
+  .auto-speak-control input { width: 38px; height: 23px; }
+  .auto-speak-control input::after { width: 17px; height: 17px; left: 2px; top: 2px; }
+  .auto-speak-control input:checked::after { transform: translateX(15px); }
+  .upcoming-sidebar { padding-inline: 18px; }
+  .audio-waveform { height: 60px; }
+}
+/* In an active mobile conversation the history scrolls inside the viewport.
+   The empty hero retains natural page flow; neither state needs a spacer. */
+@media (max-width: 1023px) {
+  .app-shell:not(:has(.empty-state)) { height: 100dvh; min-height: 0; display: grid; grid-template-rows: auto minmax(0,1fr); overflow: hidden; }
+  .app-shell:not(:has(.empty-state)) .workspace { height: 100%; min-height: 0; }
+  .app-shell:not(:has(.empty-state)) .chat-panel { min-height: 0; }
+  .app-shell:not(:has(.empty-state)) .chat-scroll { min-height: 0; overflow-y: auto; }
+  .app-shell:not(:has(.empty-state)) .upcoming-sidebar { max-height: min(30dvh,300px); overflow-y: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark,.profile-monogram,.calendar-summary,.auto-speak-control,.auto-speak-control input,.auto-speak-control input::after { transition: none; }
+  .brand:hover .brand-mark { transform: none; }
+}
