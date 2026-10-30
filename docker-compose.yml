@@ -1,0 +1,19 @@
+# Fresh local reviewer installation. Never mounts the owner's existing volume.
+name: quicklist-dev
+services:
+  postgres:
+    image: pgvector/pgvector@sha256:7a7e9f22015b67edb4bef5c59daeebcd7e74bfa570df6ce60ae01237c8648a84
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-assistant}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your private .env}
+      POSTGRES_DB: ${POSTGRES_DB:-quicklist_dev}
+      POSTGRES_INITDB_ARGS: --locale=C.UTF-8 --encoding=UTF8
+    ports: ['127.0.0.1:${POSTGRES_PORT:-15432}:5432']
+    volumes: [dev_pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+volumes:
+  dev_pgdata:

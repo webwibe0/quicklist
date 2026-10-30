@@ -1,0 +1,46 @@
+# Optional local app overlay for docker-compose.yml. No production secrets/volumes.
+x-backend: &backend
+  image: quicklist-local-backend:cf3f09b0ffe339c8
+  build:
+    context: .
+    dockerfile: deploy/Dockerfile.backend
+    args:
+      PYTHON_IMAGE: python@sha256:281d39ff02e3b389401586134ff9e6572954687822a58055ec07a60ded4e0b7f
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-assistant}:${POSTGRES_PASSWORD:?Set a private local password}@postgres:5432/${POSTGRES_DB:-quicklist_dev}
+    INTERACTIVE_BUDGET_PATH: /var/lib/quicklist/interactive-budget.sqlite3
+    EMBEDDING_BUDGET_PATH: /var/lib/quicklist/embedding-budget.sqlite3
+    WORKER_STATUS_PATH: /var/lib/quicklist/worker-status.json
+  depends_on:
+    postgres: {condition: service_healthy}
+services:
+  backend:
+    <<: *backend
+    ports: ['127.0.0.1:8000:8000']
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, '8000', --workers, '1', --no-access-log]
+    volumes: [local_ai_accounting:/var/lib/quicklist]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=5)"]
+      interval: 5s
+      timeout: 6s
+      retries: 20
+  migrate:
+    <<: *backend
+    profiles: [tools]
+    entrypoint: [alembic]
+    command: [-x, legacy_owner_confirmed=yes, -x, legacy_owner_id=20000000-0000-4000-8000-000000000001, -x, legacy_owner_email=initial-owner@example.test, upgrade, head]
+  frontend:
+    image: quicklist-local-frontend:cf3f09b0ffe339c8
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.frontend
+      args:
+        NODE_IMAGE: node@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
+    ports: ['127.0.0.1:3000:3000']
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      backend: {condition: service_healthy}
+volumes:
+  local_ai_accounting:

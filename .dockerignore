@@ -1,0 +1,26 @@
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules*
+**/.next*
+**/.local
+**/.venv
+**/__pycache__
+**/.git
+**/.pytest_cache
+**/.ruff_cache
+# Include only the explicitly supplied teaching data, never dumps or ledgers.
+data/*
+!data/original
+!data/original/**
+!data/synthetic
+!data/synthetic/**
+**/*.dump
+**/*.sqlite3
+secrets
+**/private
+
+**/*.zip
+**/*.log
+**/.idea
+**/.vscode

@@ -1,0 +1,2 @@
+# Preserve audited bytes and the current runtime fingerprint (mixed LF/CRLF).
+* -text
